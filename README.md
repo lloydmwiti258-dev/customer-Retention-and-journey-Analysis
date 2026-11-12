@@ -30,7 +30,7 @@ This platform answers them. It pulls the raw point-of-sale data, cleans and mode
 <p align="center"><img src="docs/stats.svg" alt="21 outlets across 9 regions, 6 time granularities, 13 API endpoints, 16 dashboard charts, two-tier caching" width="100%"/></p>
 
 > [!NOTE]
-> This is a **portfolio showcase**. The source code and all customer data are private to the business. This repository documents the design, the engineering and the problems solved. **A code walkthrough or live demo is available on request.**
+> This is a **portfolio showcase**. The source code and all customer data are private to the business. This repository documents the design, the engineering and the problems solved. **A code walkthrough or live demo is available on request** at [lloydmwiti258@gmail.com](mailto:lloydmwiti258@gmail.com).
 
 ---
 
@@ -229,6 +229,7 @@ Every KPI is checked against its business target band and shown with a ✓ / ✗
 *I turn scattered business data into pipelines, KPIs and dashboards that leaders actually use.*
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/)
+[![Email](https://img.shields.io/badge/Email-lloydmwiti258%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:lloydmwiti258@gmail.com)
 [![GitHub](https://img.shields.io/badge/More_Projects-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lloydmwiti258-dev)
 
 *Open to conversations about data analytics, data engineering and building data products.*
