@@ -1,251 +1,236 @@
-# 📊 Customer Retention & Business Intelligence Dashboard
+<div align="center">
 
-<p>
-  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
-  <img src="https://img.shields.io/badge/pandas-150458?style=flat-square&logo=pandas&logoColor=white" alt="pandas"/>
-  <img src="https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask"/>
-  <img src="https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white" alt="Chart.js"/>
-  <img src="https://img.shields.io/badge/Google%20Sheets%20API-34A853?style=flat-square&logo=googlesheets&logoColor=white" alt="Google Sheets API"/>
-  <img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel"/>
-  <img src="https://img.shields.io/badge/Source-Private%20%C2%B7%20Showcase-2C5364?style=flat-square" alt="Showcase"/>
-</p>
+<img src="docs/banner.svg" alt="Customer Retention & Analytics Platform: from raw POS sheets to retention, CAC and LTV intelligence" width="100%"/>
 
-A full-stack analytics platform for a multi-branch retail business with shops across Kenya, the diaspora (Tanzania, Uganda) and an online store. It turns raw point-of-sale records kept in Google Sheets into a live decision-support dashboard. The dashboard covers **customer retention, repeat purchasing, customer acquisition cost (CAC), lifetime value (LTV), regional performance, cross-shop customer migration, recency/churn risk and product-bundling opportunities**.
+<br/>
 
-**Author:** [Lloyd Mwiti Mugo](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/). I designed and built the whole pipeline myself: data ingestion, cleaning, metric engineering, the REST API, the interactive BI front end and cloud deployment.
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![pandas](https://img.shields.io/badge/pandas-3.0-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.1-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Google Sheets](https://img.shields.io/badge/Google_Sheets-API_Source-34A853?style=for-the-badge&logo=googlesheets&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-Dashboards-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Deploy-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
----
+**Designed and built end to end by [Lloyd Mwiti Mugo](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/)**
 
-## 🧭 Table of Contents
-1. [Business Problem](#-business-problem)
-2. [Solution Architecture](#-solution-architecture)
-3. [Skills Demonstrated](#-skills-demonstrated)
-   - [Data Engineering](#1-data-engineering)
-   - [Data Analysis](#2-data-analysis)
-   - [Business Intelligence & Visualization](#3-business-intelligence--visualization)
-   - [Software Engineering & Deployment](#4-software-engineering--deployment)
-4. [KPI Dictionary](#-kpi-dictionary)
-5. [API Reference](#-api-reference)
-6. [Tech Stack](#-tech-stack)
-7. [Source Code & Access](#-source-code--access)
-8. [Testing & Data Validation](#-testing--data-validation)
-9. [Project Structure](#-project-structure)
+[Overview](#-overview) · [Architecture](#-architecture) · [Engineering](#-data-engineering-work) · [Analytics](#-analytics-delivered) · [Hard Problems](#-hard-problems-solved) · [KPIs](#-kpi-dictionary) · [Stack](#-technology) · [Contact](#-about-me)
+
+</div>
 
 ---
 
-## 💼 Business Problem
+## 🧭 Overview
 
-Management had thousands of transaction rows spread across 20+ branches in a shared spreadsheet, with no reliable way to answer questions like:
+A multi-branch retailer sells through **21 outlets in 9 regions**: Nairobi, the Coast, Western & Nyanza, the Rift Valley, Central Kenya, the diaspora (Tanzania and Uganda) and an online store. Every sale is logged in a shared Google Sheet, but thousands of rows of transactions don't answer the questions management asks:
 
-- *Are customers coming back, and how often?*
-- *Which shops and regions bring in the most repeat revenue?*
-- *When we open a new branch (e.g. KTDA, Kisii, Busia, Rongai), is it reaching **new** customers or just moving **existing** ones from other shops?*
-- *How much does it cost to acquire a customer, and is that cost going up or down?*
-- *Which customers have gone quiet and should get a win-back campaign?*
-- *Which products are bought together and could be bundled?*
+> *Are customers coming back? Is a new branch winning new customers or just taking them from our other shops? What does a customer cost to acquire, and is that rising? Who has gone quiet and needs a win-back call? What should we bundle?*
 
-This project answers each of these with automated, refreshable analytics.
+This platform answers them. It pulls the raw point-of-sale data, cleans and models it, computes a full suite of retention and unit-economics KPIs, and serves them through a live interactive dashboard with one-click Excel exports that marketing teams act on.
+
+<p align="center"><img src="docs/stats.svg" alt="21 outlets across 9 regions, 6 time granularities, 13 API endpoints, 16 dashboard charts, two-tier caching" width="100%"/></p>
+
+> [!NOTE]
+> This is a **portfolio showcase**. The source code and all customer data are private to the business. This repository documents the design, the engineering and the problems solved. **A code walkthrough or live demo is available on request.**
 
 ---
 
-## 🏗 Solution Architecture
+## 🏗 Architecture
 
+```mermaid
+flowchart LR
+    subgraph SRC["🗂️ Source"]
+        GS[("Google Sheets<br/>POS transactions")]
+        UP["CSV upload<br/>schema-validated"]
+    end
+
+    subgraph ENG["⚙️ Data Engineering Layer"]
+        EXT["Extract<br/>service account or CSV export<br/>retry with backoff"]
+        CLN["Clean and conform<br/>schema drift, price parsing,<br/>shop to region dimension"]
+        FEAT["Feature engineering<br/>customer ID, first visit,<br/>visit-day grain"]
+        CACHE["Two-tier cache<br/>raw data + computed KPIs"]
+    end
+
+    subgraph OUT["📊 Delivery"]
+        KPI["KPI engine<br/>retention, cohorts,<br/>CAC, LTV, recency, bundles"]
+        API["Flask REST API<br/>13 endpoints, filters"]
+        UI["Interactive dashboard<br/>16 Chart.js visuals"]
+        EXP["Excel target lists"]
+    end
+
+    UP --> GS
+    GS --> EXT --> CLN --> FEAT --> CACHE --> KPI --> API --> UI
+    API --> EXP
+
+    classDef src fill:#0b2530,stroke:#22d3ee,color:#e2e8f0
+    classDef eng fill:#0d3b36,stroke:#34d399,color:#e2e8f0
+    classDef out fill:#1a2e05,stroke:#a3e635,color:#f7fee7
+    class GS,UP src
+    class EXT,CLN,FEAT,CACHE eng
+    class KPI,API,UI,EXP out
 ```
- ┌──────────────────────┐      ┌───────────────────────────────────────────────┐      ┌──────────────────────────┐
- │   DATA SOURCES       │      │          PYTHON / FLASK BACKEND (ETL + API)     │      │   BI FRONT END           │
- │                      │      │                                               │      │                          │
- │ • Google Sheets      │─────▶│ EXTRACT   gspread (service account) OR        │      │ • KPI cards              │
- │   (POS transactions) │      │           public CSV export with retry/backoff│      │ • 15+ Chart.js visuals   │
- │ • CSV uploads        │─────▶│ TRANSFORM pandas cleaning, normalization,     │─JSON▶│ • Region/shop/period     │
- │                      │◀─────│           feature engineering, KPI models     │      │   filters & drill-downs  │
- │  (write-back via API)│      │ LOAD      2-tier in-memory cache (30 min TTL) │      │ • Excel exports          │
- └──────────────────────┘      │ SERVE     15 REST endpoints, Excel exports    │      │ • CSV upload             │
-                               └───────────────────────────────────────────────┘      └──────────────────────────┘
-                                              Deployed on Vercel / Gunicorn
-```
 
 ---
 
-## 🛠 Skills Demonstrated
+## 🛠 Data Engineering Work
 
-### 1. Data Engineering
+A complete data product, built end to end: ingestion, cleaning, modelling, metric engineering, performance tuning and delivery.
 
-| Skill | How it's applied in this project |
-|---|---|
-| **ETL pipeline design** | `get_customer_data()` runs a complete Extract → Transform → Load flow from Google Sheets into an analysis-ready pandas DataFrame. |
-| **Multiple ingestion strategies** | Supports authenticated **Google Sheets API** access (service-account file *or* inline JSON credentials for cloud) and a **public CSV-export URL** fallback. Sheet URLs are rewritten into export URLs automatically. |
-| **Resilient data extraction** | HTTP retry strategy (`urllib3.Retry`) with exponential backoff on `429/5xx` responses, request timeouts, and **graceful degradation to stale cache** if the source is unreachable. |
-| **Data cleaning & standardization** | Reconciles schema drift (`Location` → `Shop`), normalizes shop names (trim + Title Case), strips currency symbols and text from `Price` and `MARKETING EXPENSE` with regex, coerces bad dates and numbers safely (`errors='coerce'`), and filters out B2B/organization records and out-of-scope years. |
-| **Master data / dimension modelling** | Builds a **shop → region dimension** (`SHOP_REGION_MAP`) and a region color palette, so 20+ branches roll up into 9 business regions (Nairobi CBD, Metropolitan, Coastal, Western & Nyanza, Rift Valley, Central, Diaspora, Online, Rejects). |
-| **Entity resolution** | Uses the phone number as a surrogate **Customer_ID** to track the same customer across shops and over time. |
-| **Feature engineering** | Pre-computes each customer's `First_Visit_Date` once, at ingestion, so new-vs-returning and CAC calculations run fast downstream. |
-| **Caching layer** | Two-level caching: a **raw-data cache** and a **computed-API-response cache** (30-minute TTL), plus a manual `/api/refresh-now` invalidation endpoint. |
-| **Performance optimization** | Replaced an O(n × m) per-customer scan with **vectorized pre-grouping** (O(m log m)), computed purchase cycles with vectorized `diff()` + boundary masks instead of loops, and **lazy-loads** shop-level data only when a shop is selected. |
-| **Reverse ETL / write-back** | `/api/upload` validates an uploaded CSV against a required schema and **appends it to the Google Sheet**, then invalidates both caches. |
-| **Secrets & configuration management** | All credentials and settings come from environment variables via `python-dotenv`, with a documented `.env.example`. No secrets or key-file paths are hard-coded anywhere in the codebase, and a `.gitignore` keeps `.env`, service-account keys, customer data exports and logs out of version control. |
+<table>
+<tr>
+<td width="50%" valign="top">
 
-### 2. Data Analysis
+### 1 · Resilient ingestion
+Two ingestion paths. The first uses **authenticated Google Sheets API** access through a service account, with credentials supplied as a file or as inline JSON for cloud deployment. The second is a **public CSV-export fallback**. Requests retry with exponential backoff on `429` and `5xx` responses and have hard timeouts. If the source goes down, the platform **keeps serving from its last good cache** instead of failing.
 
-| Analytical technique | Implementation |
-|---|---|
-| **Customer retention analysis** | Period-over-period retention (customers in period *t* who were also active in *t-1*) at **daily, weekly, monthly, quarterly, semi-annual and yearly** grain. |
-| **Cohort-style cumulative retention** | Starting from a fixed launch date (April 2025), each month's customers are split into **New vs Returning**, with the revenue share of each group. |
-| **Repeat-purchase behaviour** | Classifies customers as **one-timers vs repeat** by *distinct visit days* (not transaction count), which avoids inflating repeat rates with same-day multi-item baskets. |
-| **Customer lifespan & purchase cycle** | Average days between first and last purchase, and the **mean inter-purchase interval** (mean of each customer's own average). |
-| **Unit economics: CAC & LTV** | **CAC** = marketing spend ÷ newly acquired customers; **LTV proxy** = revenue ÷ active customers; both tracked with period-over-period **growth rates**. |
-| **Growth analytics** | Repeat-customer growth, spend growth, lifespan growth, CAC growth and LTV growth at monthly, quarterly, semi-annual and annual levels. |
-| **Recency segmentation (RFM-style)** | Customers are bucketed into **Monthly / Quarterly / Semi-Annual / Annual / Inactive (>1yr)** recency brackets, which feeds churn-risk and win-back targeting. |
-| **Cross-shop migration / cannibalization analysis** | For new branches (KTDA, Kisii, Busia, Rongai, Website, Rejects): what share of customers are **genuinely new** and what share came from **other shops**, which shops they came from, and the revenue contribution of each source shop. |
-| **Market basket analysis** | Product **co-occurrence (pair) mining** with `itertools.combinations`, broken down by gender, to recommend **product bundles**. |
-| **Segmentation** | Performance cuts by **region, shop, gender and product** (top 10 products by revenue, average price, revenue per sale, unique buyers). |
-| **Data reconciliation** | Regional totals are deliberately built as the **sum of shop-level figures**, so drill-downs always add back up to the parent total. |
-| **Target benchmarking** | Every KPI is checked against a business target band (e.g. retention 15–20%, repeat rate 20–30%) and shown with a ✓ / ✗ status. |
+</td>
+<td width="50%" valign="top">
 
-### 3. Business Intelligence & Visualization
+### 2 · Cleaning and conforming
+The sheet is maintained by hand, so the pipeline expects drift. It renames `Location` to `Shop`, normalises shop names, uses regex to strip currency symbols and text from `Price` and `MARKETING EXPENSE`, coerces bad dates and numbers safely, and **filters out B2B and organisation records** so they don't distort consumer metrics.
 
-- **Interactive single-page BI dashboard**  with sections for:
-  - 📈 General Overview (KPI cards)
-  - 📢 Marketing & Acquisition Analysis (spend vs. new customers vs. CAC)
-  - 🕵️ Customer Retention & Recency (bracket distribution + searchable at-risk list)
-  - 📊 Periodic Performance Metrics (growth KPIs)
-  - 🎯 Overall Performance Breakdown & 👥 Customer Distribution
-  - 🌍 Regional Performance Analysis with shop-level drill-down
-  - 🏪 Monthly Performance per Shop
-  - 🔍 New-Branch Customer Origin breakdowns (KTDA, Kisii, Busia, Rongai, Rejects, Website)
-  - 🛍️ Product Bundling Recommendations & 📦 Product Performance
-- **Chart.js visualizations**: bar, line, doughnut, pie and radar charts, including dual-axis combined charts.
-- **Slicers and filters**: unified period selector, region, shop, recency bracket, days-inactive threshold, and bundle filters by shop, region and timeline.
-- **Self-service data exports**: one-click **Excel (.xlsx)** downloads of new, repeat and existing customer lists and recency/win-back lists, so marketing teams can act on them directly.
-- **Self-service data loading**: CSV upload from the UI straight into the source system.
-- **Storytelling with KPIs**: target-band status indicators, color-coded regions, and revenue-contribution percentages that turn the numbers into business actions.
+</td>
+</tr>
+<tr>
+<td valign="top">
 
-### 4. Software Engineering & Deployment
+### 3 · Modelling and feature engineering
+A **shop → region dimension** rolls 21 outlets up into 9 business regions. **Phone-number entity resolution** gives every customer one ID across all branches. Each customer's **first visit date** is computed once at load time, which makes the new-vs-returning and CAC calculations fast everywhere else.
 
-- **RESTful API design** with Flask: 15 JSON and file endpoints, query-parameter filtering (`shop`, `region`, `granularity`, `period`, `start_date`, `end_date`), proper HTTP status codes (400/404/500) and structured error payloads.
-- **Reusable, parameterized analytics functions**: one generic `calculate_shop_customer_classification(df, shop_name)` serves every branch instead of duplicated code.
-- **Defensive programming**: divide-by-zero guards, NaN handling, flexible column detection (`Product` / `Item` / `Product Name` …), and tracebacks logged server-side.
-- **Cloud deployment**: Vercel serverless config and Gunicorn for WSGI hosting, with pinned dependencies.
-- **Test-driven validation**: mock-data verification scripts for core business logic (see [Testing](#-testing--data-validation)).
+</td>
+<td valign="top">
+
+### 4 · Serving and self-service
+A Flask **REST API** with shop, region, granularity and date-range filters returns proper `400`, `404` and `500` responses. Teams can download **Excel target lists** of new, repeat and lapsed customers, and **upload a CSV** that is validated against the schema and written back to the source sheet.
+
+</td>
+</tr>
+</table>
+
+### ⚡ Performance engineering
+
+| Technique | What it does |
+|:--|:--|
+| **Vectorised pre-grouping** | Replaced an **O(n × m)** per-customer dataframe scan with one-pass groupbys and O(1) lookups |
+| **Vectorised purchase-cycle maths** | `diff()` with customer-boundary masks instead of Python loops |
+| **Two-tier caching** | Raw-data cache plus a computed-response cache, each with a 30-minute TTL, and a manual refresh endpoint |
+| **Lazy loading** | The first page load carries company-wide KPIs only; shop-level detail is computed when a shop is opened |
+| **Parallel front-end fetches** | The branch origin analyses load concurrently with `Promise.all` |
+| **Payload capping** | Long customer lists are capped (for example, the top 1,000 by recency) so the UI stays responsive |
 
 ---
 
-## 📖 KPI Dictionary
+## 📊 Analytics Delivered
+
+| Area | What's analysed | Business question answered |
+|:--|:--|:--|
+| 🔁 **Retention** | Period-over-period retention at day, week, month, quarter, half-year and year grain | *Are customers coming back?* |
+| 🧬 **Cohorts** | Cumulative New vs Returning customers and revenue from a fixed launch date | *Is growth coming from new or loyal customers?* |
+| 🛒 **Repeat behaviour** | One-timers vs repeaters, lifespan, average purchase cycle | *How often do people come back, and how long do they stay?* |
+| 💰 **Unit economics** | CAC, LTV proxy, and growth in repeat customers, spend, lifespan, CAC and LTV | *Is marketing spend efficient, and is it improving?* |
+| 🌍 **Regional and shop** | Region totals built from shop figures, top shops per region, per-shop monthly trends | *Where is the business strongest and weakest?* |
+| 🧭 **Branch origin** | For each new branch (KTDA, Kisii, Busia, Rongai, Website, Rejects): genuinely new customers vs customers moved from other shops, by source shop | *Is expansion growing the customer base, or just moving it around?* |
+| ⏰ **Recency** | Monthly, Quarterly, Semi-Annual, Annual and Inactive (>1yr) brackets, with exportable lists | *Who should we win back, right now?* |
+| 🎁 **Basket analysis** | Product-pair co-occurrence mining with gender split, filterable by shop, region and period | *What should we bundle, and for whom?* |
+| 👥 **Segmentation** | Gender performance, top 10 products by revenue, average price and revenue per sale | *Who buys what?* |
+
+---
+
+## 🧩 Hard Problems Solved
+
+| Challenge | What I did |
+|:--|:--|
+| 🧾 **Inflated repeat rates** | A customer buying three items in one visit shows up as three transactions. I defined a **visit as a unique customer-day**, so repeat rates measure real return visits, not basket size. |
+| 🏪 **Is a new branch really growing the business?** | I built a reusable classifier that splits each branch's customers into **branch-only (new)** and **cross-shop (existing)** customers. It traces which shop each existing customer came from and how much revenue each source shop contributes. |
+| ➕ **Drill-downs that didn't add up** | Region figures computed independently didn't match the sum of their shops. I now **build region totals from shop-level figures**, so every drill-down reconciles exactly. |
+| 💱 **Currency-formatted prices** | Prices and marketing spend arrived as free text, with currency symbols, separators and notes mixed in. Regex cleaning plus safe numeric coercion turns them into reliable numbers. |
+| 🔤 **Schema and naming drift** | The column was renamed (`Location`/`Shop`) and shop names were spelled inconsistently. Both are normalised at load time so the region mapping never silently drops rows. |
+| 🏢 **B2B noise** | Organisation purchases distorted consumer metrics, so they're excluded at the ingestion layer. |
+| 🐢 **Slow branch analysis** | The first version scanned the whole dataset once per customer. Rewriting it as vectorised pre-grouping made it practical on the full dataset. |
+| 🌐 **Unreliable source API** | Sheets API timeouts and rate limits are handled with retries, backoff and a fallback to the last good cache, so the dashboard stays up. |
+| 🔐 **Credential hygiene** | All secrets moved to environment variables, helper scripts were refactored off hard-coded key paths, and version control excludes keys, `.env` and customer exports. |
+
+---
+
+## 📐 KPI Dictionary
 
 | KPI | Definition |
-|---|---|
-| **Unique Customers** | Distinct `Customer_ID` (phone number) in the period |
+|:--|:--|
 | **Visit** | A unique *(customer, calendar day)* pair |
-| **Avg Spend per Visit** | Total revenue ÷ visits |
-| **Avg Spend per Customer** | Total revenue ÷ unique customers |
-| **One-Timer** | Customer with exactly 1 distinct visit day in the period |
-| **Repeat Customer** | Customer with more than 1 distinct visit day in the period |
-| **Repeat Rate** | Repeat customers ÷ unique customers (target: **20–30%**) |
-| **Repeat Revenue %** | Revenue from repeat customers ÷ total revenue |
-| **Retention Rate** | Customers active in both *t* and *t-1* ÷ customers in *t-1* (target: **15–20%**) |
-| **Avg Lifespan** | Mean days between first and last purchase (customers with lifespan > 0) |
-| **Avg Purchase Cycle** | Mean of each customer's average days between consecutive purchases |
-| **New Customer** | Customer whose first-ever purchase falls in the period |
+| **Repeat customer** | More than one distinct visit day in the period |
+| **Repeat rate** | Repeat customers ÷ unique customers · *target 20–30%* |
+| **Retention rate** | Customers active in both *t* and *t−1* ÷ customers in *t−1* · *target 15–20%* |
+| **Repeat revenue %** | Revenue from repeat customers ÷ total revenue |
+| **Avg lifespan** | Mean days between first and last purchase (customers with a lifespan above zero) |
+| **Avg purchase cycle** | Mean of each customer's average days between consecutive purchases |
+| **New customer** | A customer whose first purchase ever falls in the period |
 | **CAC** | Marketing expense ÷ new customers |
 | **LTV (proxy)** | Period revenue ÷ active customers |
-| **Recency Bracket** | Days since last visit: <30 Monthly · <90 Quarterly · <180 Semi-Annual · <365 Annual · ≥365 Inactive |
-| **Cross-shop "Existing" Customer** | Customer of a branch who has also bought at any other branch |
+| **Recency bracket** | Days since last visit: <30 · <90 · <180 · <365 · ≥365 |
+
+Every KPI is checked against its business target band and shown with a ✓ / ✗ status on the dashboard.
 
 ---
 
-## 🔌 API Reference
-
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/` | Dashboard UI |
-| GET | `/api/data` | Full company-wide KPI payload (all time grains, regions, gender, products, marketing, periodic growth) |
-| GET | `/api/shop-data?shop=` | Lazy-loaded KPI payload for one shop |
-| GET | `/api/{ktda\|kisii\|busia\|rongai\|rejects\|website}-customer-analysis` | New vs. existing customer origin analysis (supports `start_date`, `end_date`) |
-| GET | `/api/bundles?shop=&region=&granularity=&period=` | Top-10 product pair recommendations with gender split |
-| GET | `/api/customer-recency?shop=&bracket=&days_inactive=&export=` | Recency distribution and at-risk customer list (JSON or Excel) |
-| GET | `/api/export-customers?shop=&type=&logic=` | Excel export of new/repeat customers (`cross`-shop or `internal` logic) |
-| POST | `/api/upload` | Validate a CSV and append it to the Google Sheet |
-| POST | `/api/refresh-now` | Clear the cache and recompute from the live source |
-
----
-
-## 🧰 Tech Stack
+## 🧰 Technology
 
 | Layer | Tools |
-|---|---|
-| Language | Python 3.13, JavaScript, HTML/CSS |
-| Data processing | **pandas**, **NumPy**, itertools, collections |
-| Data source / integration | **Google Sheets API** (gspread, google-auth), REST/CSV via requests |
-| Backend / API | **Flask**, Gunicorn |
-| Visualization | **Chart.js** |
-| Reporting / export | openpyxl, XlsxWriter (Excel) |
-| Config & security | python-dotenv, environment-based secrets |
-| Deployment | **Vercel** (serverless Python) |
+|:--|:--|
+| **Source** | Google Sheets (POS transaction log) |
+| **Ingestion** | Python, `gspread`, `google-auth`, `requests` with `urllib3` retry |
+| **Transformation** | pandas, NumPy, `itertools`, `collections` |
+| **Serving** | Flask, Jinja2, JSON REST APIs, Gunicorn |
+| **Visualisation** | Chart.js (bar, line, doughnut, pie, radar), responsive dashboard UI |
+| **Reporting** | Excel exports through `openpyxl` and `XlsxWriter` |
+| **Config and security** | `python-dotenv`, environment-based secrets |
+| **Deployment** | Vercel (serverless Python) |
 
 ---
 
-## 🔒 Source Code & Access
+## ✅ How I Validate Data
 
-> This repository is a **project showcase**. The production source code is kept **private** because it runs on a live business's customer data.
->
-> 📩 **A code walkthrough or live demo is available on request.** Reach me on [LinkedIn](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/).
-
-**Source data model** (columns ingested from the POS sheet): `Date`, `First Name`, `Phone`, `Gender`, `Shop` (or `Location`), `Price`, `Product`, `MARKETING EXPENSE`.
-
-**Deployment:** Python 3.13 · Flask · Gunicorn · Vercel · secrets supplied through environment variables (`.env`), never committed.
+- **Mock-data unit checks.** Small hand-built datasets with known answers test retention, CAC and LTV growth, marketing attribution, bundle mining and branch-origin classification before anything touches live data.
+- **Reconciliation by construction.** Region totals are built from shop figures, and branch new/existing revenue adds back up to the branch total.
+- **Data profiling first.** Diagnostic scripts inspected worksheets, headers, shop spellings, price formats and dataset scale before any metric was built.
+- **Endpoint checks.** API smoke tests confirm payload shape and status codes.
 
 ---
 
-## ✅ Testing & Data Validation
+## 🎓 Skills Demonstrated
 
-Business logic is checked with **mock datasets that have known expected outputs**, which isolates the calculations from the live data source:
-
-| Script | Validates |
-|---|---|
-| `verify_retention_logic.py` | Cumulative new vs. returning retention |
-| `verify_performance_metrics.py` | CAC, LTV and period-over-period growth |
-| `verify_marketing_logic.py` | Marketing spend to acquisition attribution |
-| `verify_bundles.py` | Product co-occurrence / bundle mining |
-| `verify_busia_mocked.py`, `verify_busia.py`, `verify_kisii.py` | Cross-shop new vs. existing classification |
-| `verify_api.py`, `test_api.py` | Endpoint health and payload shape |
-
-Data-profiling and diagnostic utilities (`inspect_worksheets.py`, `debug_columns.py`, `diagnose_data.py`, `check_scale.py`, `inspect_cycle.py`, `sample_marketing_data.py`) were used to explore the schema, find data-quality issues (e.g. inconsistent shop spellings, currency-formatted prices) and check dataset scale before building the metrics.
-
----
-
-## 📁 Project Structure
-
-```
-CUSTOMERS DATA/
-├── APP.PY                    # Flask app: ETL, KPI engine, REST API, exports
-├── templates/
-│   └── index.html            # Interactive BI dashboard (Chart.js)
-├── requirements.txt          # Pinned dependencies
-├── vercel.json               # Serverless deployment config
-├── .env.example              # Environment variable template
-├── verify_*.py / test_*.py   # Business-logic & API validation scripts
-└── inspect_* / debug_* / diagnose_* / check_*.py   # Data profiling utilities
-```
+<p>
+<img src="https://img.shields.io/badge/ETL_Pipelines-0d3b36?style=flat-square" alt="ETL Pipelines"/>
+<img src="https://img.shields.io/badge/API_Data_Ingestion-0d3b36?style=flat-square" alt="API Data Ingestion"/>
+<img src="https://img.shields.io/badge/Data_Cleaning-0d3b36?style=flat-square" alt="Data Cleaning"/>
+<img src="https://img.shields.io/badge/Dimensional_Modelling-0d3b36?style=flat-square" alt="Dimensional Modelling"/>
+<img src="https://img.shields.io/badge/Entity_Resolution-0d3b36?style=flat-square" alt="Entity Resolution"/>
+<img src="https://img.shields.io/badge/Feature_Engineering-0d3b36?style=flat-square" alt="Feature Engineering"/>
+<img src="https://img.shields.io/badge/Performance_Tuning-0d3b36?style=flat-square" alt="Performance Tuning"/>
+<img src="https://img.shields.io/badge/Caching-0d3b36?style=flat-square" alt="Caching"/>
+<img src="https://img.shields.io/badge/Retention_%26_Cohort_Analysis-0b2530?style=flat-square" alt="Retention and Cohort Analysis"/>
+<img src="https://img.shields.io/badge/CAC_%2F_LTV-0b2530?style=flat-square" alt="CAC / LTV"/>
+<img src="https://img.shields.io/badge/RFM_Segmentation-0b2530?style=flat-square" alt="RFM Segmentation"/>
+<img src="https://img.shields.io/badge/Market_Basket_Analysis-0b2530?style=flat-square" alt="Market Basket Analysis"/>
+<img src="https://img.shields.io/badge/KPI_Design-0b2530?style=flat-square" alt="KPI Design"/>
+<img src="https://img.shields.io/badge/Dashboard_Design-1a2e05?style=flat-square" alt="Dashboard Design"/>
+<img src="https://img.shields.io/badge/REST_APIs-1a2e05?style=flat-square" alt="REST APIs"/>
+<img src="https://img.shields.io/badge/Data_Storytelling-1a2e05?style=flat-square" alt="Data Storytelling"/>
+<img src="https://img.shields.io/badge/Stakeholder_Reporting-1a2e05?style=flat-square" alt="Stakeholder Reporting"/>
+</p>
 
 ---
 
-## 🎯 Business Impact
+## 👤 About Me
 
-- **One source of truth** for retention and revenue KPIs across all branches and regions, replacing manual spreadsheet work.
-- **Expansion decisions backed by data**: shows whether new branches bring in new customers or move existing ones over from other shops.
-- **Marketing ROI visibility** through CAC and LTV trends.
-- **Action-ready customer lists** for win-back and loyalty campaigns, exported straight to Excel.
-- **Revenue uplift opportunities** from data-driven product bundling.
+<div align="center">
 
----
+### Lloyd Mwiti Mugo
+**Data Analyst · Data Engineer · BI Developer**
 
-## 👤 Author
+*I turn scattered business data into pipelines, KPIs and dashboards that leaders actually use.*
 
-**Lloyd Mwiti Mugo**: Data Analyst · Data Engineer · Business Intelligence Developer
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/)
+[![GitHub](https://img.shields.io/badge/More_Projects-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lloydmwiti258-dev)
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Lloyd%20Mwiti%20Mugo-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lloyd-mwiti-mugo-94066a243/)
+*Open to conversations about data analytics, data engineering and building data products.*
 
-I'm open to connecting about data analytics, data engineering and BI opportunities.
-
----
-
-*Designed and built end-to-end by Lloyd Mwiti Mugo as a data analytics, data engineering and business intelligence project.*
+</div>

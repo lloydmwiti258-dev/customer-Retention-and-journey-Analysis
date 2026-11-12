@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="170" viewBox="0 0 1280 170" role="img" aria-label="21 outlets across 9 regions, 6 time granularities, 13 API endpoints, 16 dashboard charts, 30-minute two-tier cache">
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b2530"/>
+      <stop offset="1" stop-color="#06141a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#a3e635"/>
+    </linearGradient>
+  </defs>
+  <g font-family="Segoe UI, Helvetica Neue, Helvetica, Arial, sans-serif" text-anchor="middle">
+    <g transform="translate(0 10)">
+      <rect x="4" width="242" height="150" rx="14" fill="url(#card)" stroke="#34d399" stroke-opacity="0.35"/>
+      <rect x="4" width="242" height="4" rx="2" fill="url(#accent)"/>
+      <text x="125" y="78" fill="#f8fafc" font-size="48" font-weight="800">21 · 9</text>
+      <text x="125" y="112" fill="#cbd5e1" font-size="17" font-weight="600">Outlets · regions</text>
+      <text x="125" y="136" fill="#64748b" font-size="13">Kenya, diaspora &amp; online</text>
+    </g>
+    <g transform="translate(258 10)">
+      <rect x="0" width="242" height="150" rx="14" fill="url(#card)" stroke="#34d399" stroke-opacity="0.35"/>
+      <rect x="0" width="242" height="4" rx="2" fill="url(#accent)"/>
+      <text x="121" y="78" fill="#f8fafc" font-size="48" font-weight="800">6</text>
+      <text x="121" y="112" fill="#cbd5e1" font-size="17" font-weight="600">Time granularities</text>
+      <text x="121" y="136" fill="#64748b" font-size="13">Daily to yearly retention</text>
+    </g>
+    <g transform="translate(512 10)">
+      <rect x="0" width="242" height="150" rx="14" fill="url(#card)" stroke="#34d399" stroke-opacity="0.35"/>
+      <rect x="0" width="242" height="4" rx="2" fill="url(#accent)"/>
+      <text x="121" y="78" fill="#f8fafc" font-size="48" font-weight="800">13</text>
+      <text x="121" y="112" fill="#cbd5e1" font-size="17" font-weight="600">API endpoints</text>
+      <text x="121" y="136" fill="#64748b" font-size="13">JSON, Excel export, upload</text>
+    </g>
+    <g transform="translate(766 10)">
+      <rect x="0" width="242" height="150" rx="14" fill="url(#card)" stroke="#34d399" stroke-opacity="0.35"/>
+      <rect x="0" width="242" height="4" rx="2" fill="url(#accent)"/>
+      <text x="121" y="78" fill="#f8fafc" font-size="48" font-weight="800">16</text>
+      <text x="121" y="112" fill="#cbd5e1" font-size="17" font-weight="600">Dashboard charts</text>
+      <text x="121" y="136" fill="#64748b" font-size="13">Bar, line, doughnut, radar</text>
+    </g>
+    <g transform="translate(1020 10)">
+      <rect x="0" width="256" height="150" rx="14" fill="url(#card)" stroke="#34d399" stroke-opacity="0.35"/>
+      <rect x="0" width="256" height="4" rx="2" fill="url(#accent)"/>
+      <text x="128" y="78" fill="#f8fafc" font-size="48" font-weight="800">2-tier</text>
+      <text x="128" y="112" fill="#cbd5e1" font-size="17" font-weight="600">Caching layer</text>
+      <text x="128" y="136" fill="#64748b" font-size="13">Raw data + computed KPIs</text>
+    </g>
+  </g>
+</svg>
